@@ -2,46 +2,60 @@ import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store/store";
+import { RootState, AppDispatch } from "../../store/store";
 import { removeMember, updateMemberProjects } from "../MyTeam/TeamSlice";
 import Navbar from "../../layouts/Navbar";
 import Sidebar from "../../layouts/Sidebar";
 import TeamMemberCard from "../MyTeam/components/TeamMemberCard";
 import { Project } from "../../pages/Dashboard/types";
+import { fetchProjects } from "../../pages/Dashboard/projectSlice";
+
+// Custom event for team updates
+const TEAM_UPDATED_EVENT = "team_updated";
 
 const Team: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const team = useSelector((state: RootState) => state.team.team);
-
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [availableProjects, setAvailableProjects] = useState<string[]>([]);
+  const { projects } = useSelector((state: RootState) => state.projects);
+  
+  const [sidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [newProject, setNewProject] = useState("");
+  const [availableProjects, setAvailableProjects] = useState<string[]>([]);
+
+  // Fetch projects from Redux store
+  useEffect(() => {
+    dispatch(fetchProjects());
+  }, [dispatch]);
 
   useEffect(() => {
-    const savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    setProjects(savedProjects);
+    if (projects && projects.length > 0) {
+      const projectTitles = projects.map((project: Project) => project.title);
+      setAvailableProjects(projectTitles);
+    }
+  }, [projects]);
 
-    const projectTitles = savedProjects.map((project: Project) => project.title);
-    setAvailableProjects(projectTitles);
-  }, []);
+  useEffect(() => {
+    localStorage.setItem("team", JSON.stringify(team));
+    
+    const event = new CustomEvent(TEAM_UPDATED_EVENT);
+    window.dispatchEvent(event);
+  }, [team]);
 
   const handleRemoveMember = (rank: number) => {
     dispatch(removeMember(rank));
     showNotification("Team member removed", "The member has been removed from your team", "red");
   };
 
-  const handleAddProject = (rank: number) => {
-    if (newProject.trim() === "") return;
+  const handleAddProject = (rank: number, projectName: string) => {
+    if (projectName.trim() === "") return;
 
     const member = team.find(user => user.rank === rank);
-    if (!member || member.projects.includes(newProject)) return;
+    if (!member || member.projects.includes(projectName)) return;
 
-    const updatedProjects = [...member.projects, newProject];
+    const updatedProjects = [...member.projects, projectName];
     dispatch(updateMemberProjects({ rank, projects: updatedProjects }));
-    setNewProject("");
 
     showNotification("Project added", "The project has been assigned to the team member", "green");
   };
@@ -86,7 +100,7 @@ const Team: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar projects={projects} sidebarOpen={true} />
+      <Sidebar projects={projects} sidebarOpen={sidebarOpen} />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
@@ -134,10 +148,7 @@ const Team: React.FC = () => {
                   user={user}
                   availableProjects={availableProjects}
                   onRemoveMember={handleRemoveMember}
-                  onAddProject={(rank, project) => {
-                    setNewProject(project);
-                    handleAddProject(rank);
-                  }}
+                  onAddProject={handleAddProject}
                   onRemoveProject={handleRemoveProject}
                 />
               ))
