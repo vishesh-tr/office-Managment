@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { motion } from "framer-motion";
 import user1 from "../../assets/img1.png";
 import user2 from "../../assets/img10.png";
 import user3 from "../../assets/img11.png";
@@ -96,32 +97,62 @@ const AddUser: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Add New Team Member</h2>
-        <div className="flex flex-col gap-5">
-          <div>
-            <label className="block text-gray-700 mb-1 font-medium">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Enter full name"
-              value={newUser.name}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700 mb-1 font-medium">Role</label>
-            <input
-              type="text"
-              name="role"
-              placeholder="e.g., Frontend, Backend"
-              value={newUser.role}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-            />
-          </div>
-          <div>
+      <motion.div
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-xl"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          Add New Team Member
+        </h2>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+              },
+            },
+          }}
+          className="flex flex-col gap-5"
+        >
+          {[
+            {
+              label: "Full Name",
+              name: "name",
+              placeholder: "Enter full name",
+              value: newUser.name,
+            },
+            {
+              label: "Role",
+              name: "role",
+              placeholder: "e.g., Frontend, Backend",
+              value: newUser.role,
+            },
+          ].map((field, idx) => (
+            <motion.div
+              key={idx}
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+            >
+              <label className="block text-gray-700 mb-1 font-medium">
+                {field.label}
+              </label>
+              <input
+                type="text"
+                name={field.name}
+                placeholder={field.placeholder}
+                value={field.value}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              />
+            </motion.div>
+          ))}
+
+          <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
             <label className="block text-gray-700 mb-1 font-medium">Select Avatar</label>
             <select
               onChange={handleAvatarChange}
@@ -135,8 +166,9 @@ const AddUser: React.FC = () => {
                 </option>
               ))}
             </select>
-          </div>
-          <div>
+          </motion.div>
+
+          <motion.div variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}>
             <label className="block text-gray-700 mb-1 font-medium">Assign Project</label>
             <select
               onChange={handleProjectChange}
@@ -154,15 +186,17 @@ const AddUser: React.FC = () => {
                 <option disabled>Loading projects...</option>
               )}
             </select>
-          </div>
-          <button
+          </motion.div>
+
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             onClick={handleAddUser}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition active:scale-95"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
           >
             Add User
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

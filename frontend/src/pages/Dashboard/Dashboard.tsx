@@ -18,6 +18,7 @@ import {
   updateProject,
   updateProjectColor
 } from './projectSlice';
+import { addNotification } from '../Inbox/inboxSlice';
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -82,8 +83,30 @@ const Dashboard: React.FC = () => {
           projectId,
           updatedProject: currentProject
         }));
+
+        // Send notification for project update
+        dispatch(addNotification({
+          title: "Project Updated",
+          message: `Project "${currentProject.title}" has been updated.`,
+          type: "info",
+          projectId: projectId,
+          projectTitle: currentProject.title,
+          projectColor: currentProject.color
+        }));
       } else {
-        dispatch(addProject(currentProject));
+        // Add new project
+        const result = await dispatch(addProject(currentProject));
+        const newProject = result.payload as Project;
+
+        // Send notification for project creation
+        dispatch(addNotification({
+          title: "Project Created",
+          message: `New project "${currentProject.title}" has been created.`,
+          type: "success",
+          projectId: newProject._id,
+          projectTitle: currentProject.title,
+          projectColor: currentProject.color
+        }));
       }
 
       setModalOpen(false);
@@ -117,6 +140,15 @@ const Dashboard: React.FC = () => {
 
       dispatch(deleteProject(projectToDelete._id));
 
+      // Send notification for project deletion
+      dispatch(addNotification({
+        title: "Project Deleted",
+        message: `Project "${projectToDelete.title}" has been moved to bin.`,
+        type: "warning",
+        projectTitle: projectToDelete.title,
+        projectColor: projectToDelete.color
+      }));
+
       dispatch(showNotification({
         message: 'Success',
         description: 'Project moved to bin',
@@ -131,7 +163,7 @@ const Dashboard: React.FC = () => {
       }));
     }
   };
-  
+
   const handleContextMenu = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
     e.stopPropagation();
@@ -165,6 +197,16 @@ const Dashboard: React.FC = () => {
       const projectId = projectToUpdate._id;
 
       dispatch(updateProjectColor({ projectId, color }));
+
+      // Send notification for color update
+      dispatch(addNotification({
+        title: "Project Updated",
+        message: `Color for "${projectToUpdate.title}" has been updated.`,
+        type: "info",
+        projectId: projectId,
+        projectTitle: projectToUpdate.title,
+        projectColor: color
+      }));
 
       // Then update on the server
       dispatch(updateProject({

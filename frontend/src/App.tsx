@@ -10,6 +10,7 @@ import ProjectDetails from "./pages/Dashboard/components/ProjectDetails";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Inbox from "./pages/Inbox/Inbox";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/add-user" element={<AddUser />} />
           <Route path="/bin" element={<Bin />} />
           <Route path="/project/:id" element={<ProjectDetails />} />
+          <Route path="/inbox" element={<Inbox />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />
