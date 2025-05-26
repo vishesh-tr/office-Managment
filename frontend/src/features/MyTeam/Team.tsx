@@ -10,7 +10,6 @@ import TeamMemberCard from "../MyTeam/components/TeamMemberCard";
 import { Project } from "../../pages/Dashboard/types";
 import { fetchProjects } from "../../pages/Dashboard/projectSlice";
 
-// Custom event for team updates
 const TEAM_UPDATED_EVENT = "team_updated";
 
 const Team: React.FC = () => {
@@ -19,12 +18,30 @@ const Team: React.FC = () => {
 
   const team = useSelector((state: RootState) => state.team.team);
   const { projects } = useSelector((state: RootState) => state.projects);
-  
+
   const [sidebarOpen] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [availableProjects, setAvailableProjects] = useState<string[]>([]);
 
-  // Fetch projects from Redux store
+  // --------- DARK MODE STATE -----------
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("dark-mode");
+      if (saved !== null) return saved === "true";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("dark-mode", darkMode.toString());
+  }, [darkMode]);
+
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
@@ -38,7 +55,6 @@ const Team: React.FC = () => {
 
   useEffect(() => {
     localStorage.setItem("team", JSON.stringify(team));
-    
     const event = new CustomEvent(TEAM_UPDATED_EVENT);
     window.dispatchEvent(event);
   }, [team]);
@@ -99,17 +115,40 @@ const Team: React.FC = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       <Sidebar projects={projects} sidebarOpen={sidebarOpen} />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
 
+        {/* Dark Mode Toggle Button */}
+        <div className="flex justify-end items-center p-4">
+          <button
+            onClick={() => setDarkMode((prev) => !prev)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow transition-colors"
+            aria-label="Toggle Dark Mode"
+          >
+            {darkMode ? (
+              // Moon Icon
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
+              </svg>
+            ) : (
+              // Sun Icon
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M17.66 17.66l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M17.66 6.34l1.42-1.42" />
+              </svg>
+            )}
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
+        </div>
+
         <div className="flex-1 px-4 py-8 sm:px-8 lg:px-8 max-w-7xl mx-auto w-full">
           <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Team Management</h1>
-              <p className="text-gray-500 mt-1">Manage your team members and their roles</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Team Management</h1>
+              <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your team members and their roles</p>
             </div>
             <button
               onClick={() => navigate("/add-user")}
@@ -119,17 +158,17 @@ const Team: React.FC = () => {
             </button>
           </div>
 
-          <div className="mb-6 bg-white rounded-xl shadow-sm p-4">
+          <div className="mb-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
             <div className="relative w-full md:w-72">
               <input
                 type="text"
                 placeholder="Search members..."
-                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <svg
-                className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+                className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 dark:text-gray-500"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -153,14 +192,14 @@ const Team: React.FC = () => {
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl shadow-sm">
+              <div className="flex flex-col items-center justify-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
                 <img
                   src="https://cdn.iconscout.com/icon/free/png-256/free-data-not-found-1965034-1662569.png"
                   alt="No members"
                   className="w-24 h-24 mb-4 opacity-50"
                 />
-                <p className="text-gray-500 text-lg font-medium">No team members found</p>
-                <p className="text-gray-400 text-sm mt-1">Try adjusting your search</p>
+                <p className="text-gray-500 dark:text-gray-400 text-lg font-medium">No team members found</p>
+                <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">Try adjusting your search</p>
                 <button
                   onClick={() => setSearchTerm("")}
                   className="mt-4 text-blue-500 hover:text-blue-700 font-medium"
@@ -172,14 +211,14 @@ const Team: React.FC = () => {
           </div>
 
           {team.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl shadow-sm mt-6">
+            <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-xl shadow-sm mt-6">
               <img
                 src="https://cdn.iconscout.com/icon/free/png-256/free-team-1543514-1306025.png"
                 alt="Team"
                 className="w-32 h-32 mb-6 opacity-60"
               />
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">Your team is empty</h3>
-              <p className="text-gray-500 text-center max-w-md mb-8">
+              <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-100 mb-2">Your team is empty</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-center max-w-md mb-8">
                 Start by adding team members to collaborate on your projects
               </p>
               <button
@@ -196,7 +235,7 @@ const Team: React.FC = () => {
       {/* Notification Toast */}
       <div
         id="project-notification"
-        className="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg px-4 py-3 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3"
+        className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 shadow-lg rounded-lg px-4 py-3 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3"
       >
         <div id="notification-icon-container" className="bg-green-100 p-2 rounded-full">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
@@ -208,8 +247,8 @@ const Team: React.FC = () => {
           </svg>
         </div>
         <div>
-          <p id="notification-title" className="font-medium text-gray-800">Notification</p>
-          <p id="notification-message" className="text-gray-500 text-sm">Message goes here</p>
+          <p id="notification-title" className="font-medium text-gray-800 dark:text-gray-100">Notification</p>
+          <p id="notification-message" className="text-gray-500 dark:text-gray-400 text-sm">Message goes here</p>
         </div>
       </div>
     </div>

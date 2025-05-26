@@ -228,8 +228,45 @@ const Dashboard: React.FC = () => {
     project.short.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Array of different clip path styles for variety
+  const clipPaths = [
+    "polygon(0 0, 100% 0, 85% 100%, 0% 100%)",
+    "polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%)",
+    "polygon(0 0, 100% 0, 100% 80%, 0 100%)", 
+    "polygon(0 20%, 100% 0, 100% 100%, 0 100%)", 
+    "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)", 
+    "polygon(0 0, 100% 0, 80% 100%, 20% 100%)", 
+    "ellipse(75% 50% at 50% 50%)", 
+    "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)", 
+  ];
+
+  const getClipPath = (index: number) => {
+    return clipPaths[index % clipPaths.length];
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* SVG Definitions for clip paths */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id="wave-clip">
+            <path d="M0,0 L300,0 L300,120 Q250,100 200,120 T100,120 Q50,140 0,120 Z" />
+          </clipPath>
+          <clipPath id="diagonal-clip">
+            <polygon points="0,0 300,0 250,144 0,144" />
+          </clipPath>
+          <clipPath id="curved-clip">
+            <path d="M0,0 L300,0 L300,100 Q150,160 0,100 Z" />
+          </clipPath>
+          <clipPath id="hexagon-clip">
+            <polygon points="50,0 250,0 300,72 250,144 50,144 0,72" />
+          </clipPath>
+          <clipPath id="arrow-clip">
+            <polygon points="0,0 240,0 300,72 240,144 0,144" />
+          </clipPath>
+        </defs>
+      </svg>
+
       <Sidebar projects={projects} sidebarOpen={sidebarOpen} />
 
       <div className="flex-1 flex flex-col">
@@ -286,37 +323,83 @@ const Dashboard: React.FC = () => {
                 {filteredProjects.map((project, index) => (
                   <div
                     key={project._id || index}
-                    className={`relative rounded-xl overflow-hidden shadow-md transform transition-all duration-300 ${animateCard === project._id ? "scale-[1.03] shadow-lg" : ""
-                      }`}
+                    className={`relative rounded-xl overflow-hidden shadow-md transform transition-all duration-300 ${
+                      animateCard === project._id ? "scale-[1.03] shadow-lg" : ""
+                    }`}
                     onContextMenu={(e) => handleContextMenu(e, index)}
                     onClick={() => handleProjectClick(project)}
                     onMouseEnter={() => setAnimateCard(project._id)}
                     onMouseLeave={handleCardLeave}
                   >
-                    <div className={`${project.color} h-36 flex items-center justify-center`}>
-                      <span className="text-white text-5xl font-bold">{project.short}</span>
+                    {/* Main project header with clip path */}
+                    <div 
+                      className={`${project.color} h-36 flex items-center justify-center relative overflow-hidden`}
+                      style={{
+                        clipPath: getClipPath(index)
+                      }}
+                    >
+                      {/* Background pattern overlay */}
+                      <div 
+                        className="absolute inset-0 opacity-10"
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                        }}
+                      />
+                      
+                      {/* Project short text */}
+                      <span className="text-white text-5xl font-bold relative z-10">
+                        {project.short}
+                      </span>
                     </div>
-                    <div className="bg-white p-4">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-1">{project.title}</h3>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-500">
-                          {new Date(project.createdAt).toLocaleDateString()}
-                        </span>
-                        <span className="w-3 h-3 rounded-full bg-green-500"></span>
+
+                    {/* Project info section */}
+                    <div className="bg-white p-4 relative">
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-50 opacity-50" />
+                      
+                      <div className="relative z-10">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
+                          {project.title}
+                        </h3>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-500">
+                            {new Date(project.createdAt).toLocaleDateString()}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                            <span className="text-xs text-gray-400">Active</span>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Bottom accent line with clip path */}
+                      <div 
+                        className={`absolute bottom-0 left-0 right-0 h-1 ${project.color} opacity-70`}
+                        style={{
+                          clipPath: "polygon(0 0, 70% 0, 100% 100%, 0% 100%)"
+                        }}
+                      />
                     </div>
+
+                    {/* Hover overlay effect */}
+                    <div className={`absolute inset-0 bg-black transition-opacity duration-300 ${
+                      animateCard === project._id ? "opacity-5" : "opacity-0"
+                    }`} />
                   </div>
                 ))}
 
-                {/* Add New Project Card */}
+                {/* Add New Project Card with clip path */}
                 <div
-                  className="border-2 border-dashed border-gray-300 rounded-xl overflow-hidden hover:border-blue-300 transition-all bg-white flex flex-col items-center justify-center h-56 cursor-pointer"
+                  className="border-2 border-dashed border-gray-300 rounded-xl overflow-hidden hover:border-blue-300 transition-all bg-white flex flex-col items-center justify-center h-56 cursor-pointer relative group"
                   onClick={openAddProjectModal}
                 >
-                  <div className="bg-blue-50 rounded-full p-4 mb-3">
-                    <FiPlus className="text-blue-500 text-2xl" />
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="bg-blue-50 rounded-full p-4 mb-3 group-hover:bg-blue-100 transition-colors duration-300">
+                      <FiPlus className="text-blue-500 text-2xl" />
+                    </div>
+                    <p className="text-gray-700 font-medium">Add New Project</p>
                   </div>
-                  <p className="text-gray-700 font-medium">Add New Project</p>
+
                 </div>
               </div>
             ) : (
