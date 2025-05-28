@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import SEO from '../../../components/SEO';
 
 interface Project {
   _id: string;
@@ -32,6 +33,7 @@ const ProjectDetails: React.FC = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
+      <SEO title="Project Detail Page" description="This is my Project Detail page" />
       <h2>{project.title}</h2>
       <p><strong>Short Code:</strong> {project.short}</p>
       {project.color && <p><strong>Color:</strong> {project.color}</p>}

@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { setupListeners } from '@reduxjs/toolkit/query';
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { authApi } from "../api/authApi";
 import teamReducer from "../features/MyTeam/TeamSlice";
 import projectReducer from "../pages/Dashboard/projectSlice";
-import inboxReducer from '../pages/Inbox/inboxSlice';
-import { authApi } from '../api/authApi';
+import inboxReducer from "../pages/Inbox/inboxSlice";
 
 export const store = configureStore({
   reducer: {

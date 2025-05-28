@@ -1,7 +1,8 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -28,6 +29,7 @@ const ResetPassword = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#f3f1fc] p-6">
+      <SEO title="Reset Password Page" description="This is my Reset password page" />
       <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10 max-w-md w-full">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">Reset Password</h2>
         <form onSubmit={handleSubmit} className="space-y-6">

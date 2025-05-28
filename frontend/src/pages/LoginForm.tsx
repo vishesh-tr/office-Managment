@@ -1,15 +1,16 @@
 import { motion } from "framer-motion";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../api/authApi";
+import SEO from "../components/SEO";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  
+
   const [login, { isLoading }] = useLoginMutation();
 
   // Canvas animation effect
@@ -90,6 +91,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#f3f1fc] p-6 relative overflow-hidden">
+      <SEO title="Login Page" description="This is my Login page" />
       {/* Canvas Background */}
       <canvas
         ref={canvasRef}

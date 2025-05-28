@@ -14,7 +14,7 @@ export const fetchNotifications = createAsyncThunk(
   async () => {
     const savedNotifications = localStorage.getItem("inbox_notifications");
     return savedNotifications ? JSON.parse(savedNotifications) : [];
-  }
+  },
 );
 
 export const addNotification = createAsyncThunk(
@@ -28,10 +28,12 @@ export const addNotification = createAsyncThunk(
     };
 
     const saved = localStorage.getItem("inbox_notifications");
-    const updated = saved ? [newNotification, ...JSON.parse(saved)] : [newNotification];
+    const updated = saved
+      ? [newNotification, ...JSON.parse(saved)]
+      : [newNotification];
     localStorage.setItem("inbox_notifications", JSON.stringify(updated));
     return newNotification;
-  }
+  },
 );
 
 export const markNotificationAsRead = createAsyncThunk(
@@ -40,11 +42,11 @@ export const markNotificationAsRead = createAsyncThunk(
     const saved = localStorage.getItem("inbox_notifications");
     if (!saved) return { id };
     const updated = JSON.parse(saved).map((n: Notification) =>
-      n.id === id ? { ...n, read: true } : n
+      n.id === id ? { ...n, read: true } : n,
     );
     localStorage.setItem("inbox_notifications", JSON.stringify(updated));
     return { id };
-  }
+  },
 );
 
 export const deleteNotification = createAsyncThunk(
@@ -55,7 +57,7 @@ export const deleteNotification = createAsyncThunk(
     const updated = JSON.parse(saved).filter((n: Notification) => n.id !== id);
     localStorage.setItem("inbox_notifications", JSON.stringify(updated));
     return id;
-  }
+  },
 );
 
 const inboxSlice = createSlice({
@@ -89,11 +91,15 @@ const inboxSlice = createSlice({
         state.notifications.unshift(action.payload);
       })
       .addCase(markNotificationAsRead.fulfilled, (state, action) => {
-        const index = state.notifications.findIndex((n) => n.id === action.payload.id);
+        const index = state.notifications.findIndex(
+          (n) => n.id === action.payload.id,
+        );
         if (index !== -1) state.notifications[index].read = true;
       })
       .addCase(deleteNotification.fulfilled, (state, action) => {
-        state.notifications = state.notifications.filter((n) => n.id !== action.payload);
+        state.notifications = state.notifications.filter(
+          (n) => n.id !== action.payload,
+        );
       });
   },
 });

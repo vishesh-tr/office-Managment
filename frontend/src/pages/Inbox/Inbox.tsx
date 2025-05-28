@@ -1,17 +1,18 @@
+import { MoreVertical } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { AppDispatch, RootState } from "../../store/store";
-import {
-  fetchNotifications,
-  markNotificationAsRead,
-  markAllAsRead,
-  clearAllNotifications,
-  deleteNotification,
-} from "./inboxSlice";
+import SEO from "../../components/SEO";
 import Navbar from "../../layouts/Navbar";
 import Sidebar from "../../layouts/Sidebar";
-import { MoreVertical } from "lucide-react";
+import { AppDispatch, RootState } from "../../store/store";
+import {
+  clearAllNotifications,
+  deleteNotification,
+  fetchNotifications,
+  markAllAsRead,
+  markNotificationAsRead,
+} from "./inboxSlice";
 
 const Inbox: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -62,6 +63,7 @@ const Inbox: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <SEO title="Inbox Page" description="This is my Inbox page" />
       <Sidebar projects={projects} sidebarOpen={true} />
       <div className="flex-1 flex flex-col">
         <Navbar />
@@ -92,9 +94,8 @@ const Inbox: React.FC = () => {
                   {notifications.map((notification) => (
                     <li
                       key={notification.id}
-                      className={`relative group p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                        !notification.read ? "bg-blue-50" : ""
-                      }`}
+                      className={`relative group p-4 hover:bg-gray-50 cursor-pointer transition-colors ${!notification.read ? "bg-blue-50" : ""
+                        }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex items-start space-x-4">

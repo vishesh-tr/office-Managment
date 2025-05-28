@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const SignupForm = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#f3f1fc] p-6">
+      <SEO title="Signup Page" description="This is my Signup page" />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

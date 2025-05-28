@@ -1,7 +1,8 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ const ForgotPassword = () => {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-[#f3f1fc] p-6">
+      <SEO title="Forgot Password Page" description="This is my Forgot Password page" />
       <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10 max-w-md w-full">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">Forgot Password</h2>
         <p className="text-sm text-gray-600 mb-6">Enter your email to receive an OTP to reset your password.</p>
