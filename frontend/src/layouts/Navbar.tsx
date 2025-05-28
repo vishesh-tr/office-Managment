@@ -1,7 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { RiHome4Line, RiInboxLine, RiProjectorLine, RiTeamLine } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { RootState } from '../store/store';
 
 interface NavbarItem {
@@ -15,7 +15,7 @@ interface NavbarItem {
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const pathname = window.location.pathname;
-  
+
   // Get unread notifications count from inbox state
   const { notifications } = useSelector((state: RootState) => state.inbox);
   const unreadCount = notifications.filter(notification => !notification.read).length;
@@ -59,8 +59,8 @@ const Navbar: React.FC = () => {
                 onClick={() => navigate(item.route)}
                 className={`
                   flex items-center gap-1 relative
-                  ${item.isActive 
-                    ? 'text-blue-600 font-medium border-b-2 border-blue-500 pb-0.5' 
+                  ${item.isActive
+                    ? 'text-blue-600 font-medium border-b-2 border-blue-500 pb-0.5'
                     : 'text-gray-600 hover:text-gray-900'
                   }
                 `}

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import SEO from "../../components/SEO";
 import Navbar from "../../layouts/Navbar";
 import Sidebar from "../../layouts/Sidebar";
 import { AppDispatch, RootState } from '../../store/store';
 import ProjectModal from "../Dashboard/components/ProjectModal";
+import { addNotification } from '../Inbox/inboxSlice';
 import ContextMenu from "./components/ContextMenu";
 import Notification from "./components/Notification";
 import {
@@ -18,7 +20,6 @@ import {
   updateProject,
   updateProjectColor
 } from './projectSlice';
-import { addNotification } from '../Inbox/inboxSlice';
 
 const Dashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -232,12 +233,12 @@ const Dashboard: React.FC = () => {
   const clipPaths = [
     "polygon(0 0, 100% 0, 85% 100%, 0% 100%)",
     "polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%)",
-    "polygon(0 0, 100% 0, 100% 80%, 0 100%)", 
-    "polygon(0 20%, 100% 0, 100% 100%, 0 100%)", 
-    "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)", 
-    "polygon(0 0, 100% 0, 80% 100%, 20% 100%)", 
-    "ellipse(75% 50% at 50% 50%)", 
-    "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)", 
+    "polygon(0 0, 100% 0, 100% 80%, 0 100%)",
+    "polygon(0 20%, 100% 0, 100% 100%, 0 100%)",
+    "polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)",
+    "polygon(0 0, 100% 0, 80% 100%, 20% 100%)",
+    "ellipse(75% 50% at 50% 50%)",
+    "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
   ];
 
   const getClipPath = (index: number) => {
@@ -246,6 +247,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <SEO title="Desboard Page" description="This is my Dahboard page" />
       {/* SVG Definitions for clip paths */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <defs>
@@ -323,29 +325,28 @@ const Dashboard: React.FC = () => {
                 {filteredProjects.map((project, index) => (
                   <div
                     key={project._id || index}
-                    className={`relative rounded-xl overflow-hidden shadow-md transform transition-all duration-300 ${
-                      animateCard === project._id ? "scale-[1.03] shadow-lg" : ""
-                    }`}
+                    className={`relative rounded-xl overflow-hidden shadow-md transform transition-all duration-300 ${animateCard === project._id ? "scale-[1.03] shadow-lg" : ""
+                      }`}
                     onContextMenu={(e) => handleContextMenu(e, index)}
                     onClick={() => handleProjectClick(project)}
                     onMouseEnter={() => setAnimateCard(project._id)}
                     onMouseLeave={handleCardLeave}
                   >
                     {/* Main project header with clip path */}
-                    <div 
+                    <div
                       className={`${project.color} h-36 flex items-center justify-center relative overflow-hidden`}
                       style={{
                         clipPath: getClipPath(index)
                       }}
                     >
                       {/* Background pattern overlay */}
-                      <div 
+                      <div
                         className="absolute inset-0 opacity-10"
                         style={{
                           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                         }}
                       />
-                      
+
                       {/* Project short text */}
                       <span className="text-white text-5xl font-bold relative z-10">
                         {project.short}
@@ -356,7 +357,7 @@ const Dashboard: React.FC = () => {
                     <div className="bg-white p-4 relative">
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-gray-50 opacity-50" />
-                      
+
                       <div className="relative z-10">
                         <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
                           {project.title}
@@ -373,7 +374,7 @@ const Dashboard: React.FC = () => {
                       </div>
 
                       {/* Bottom accent line with clip path */}
-                      <div 
+                      <div
                         className={`absolute bottom-0 left-0 right-0 h-1 ${project.color} opacity-70`}
                         style={{
                           clipPath: "polygon(0 0, 70% 0, 100% 100%, 0% 100%)"
@@ -382,9 +383,8 @@ const Dashboard: React.FC = () => {
                     </div>
 
                     {/* Hover overlay effect */}
-                    <div className={`absolute inset-0 bg-black transition-opacity duration-300 ${
-                      animateCard === project._id ? "opacity-5" : "opacity-0"
-                    }`} />
+                    <div className={`absolute inset-0 bg-black transition-opacity duration-300 ${animateCard === project._id ? "opacity-5" : "opacity-0"
+                      }`} />
                   </div>
                 ))}
 

@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
 import axios from "axios";
 import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import user1 from "../../assets/img1.png";
 import user2 from "../../assets/img10.png";
 import user3 from "../../assets/img11.png";
 import vishesh from "../../assets/img12.png";
+import SEO from "../../components/SEO";
 
 interface NewUser {
   name: string;
@@ -97,6 +98,7 @@ const AddUser: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <SEO title="Adduser Page" description="This is my Adduser page" />
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

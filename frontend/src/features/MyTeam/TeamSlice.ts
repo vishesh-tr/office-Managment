@@ -20,15 +20,24 @@ const teamSlice = createSlice({
       state.team.push(action.payload);
     },
     removeMember: (state, action: PayloadAction<number>) => {
-      state.team = state.team.filter(user => user.rank !== action.payload);
-      state.team = state.team.map((user, index) => ({ ...user, rank: index + 1 }));
+      state.team = state.team.filter((user) => user.rank !== action.payload);
+      state.team = state.team.map((user, index) => ({
+        ...user,
+        rank: index + 1,
+      }));
     },
-    updateMemberProjects: (state, action: PayloadAction<{ rank: number, projects: string[] }>) => {
-      const member = state.team.find(user => user.rank === action.payload.rank);
+    updateMemberProjects: (
+      state,
+      action: PayloadAction<{ rank: number; projects: string[] }>,
+    ) => {
+      const member = state.team.find(
+        (user) => user.rank === action.payload.rank,
+      );
       if (member) member.projects = action.payload.projects;
-    }
+    },
   },
 });
 
-export const { setTeam, addMember, removeMember, updateMemberProjects } = teamSlice.actions;
+export const { setTeam, addMember, removeMember, updateMemberProjects } =
+  teamSlice.actions;
 export default teamSlice.reducer;

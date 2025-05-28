@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../layouts/Sidebar";
-import Navbar from "../layouts/Navbar";
-import { Project } from "../pages/Dashboard/types";
+import SEO from "../components/SEO";
 import { useLocalStoragePromise } from "../hooks/useLocalStoragePromise";
+import Navbar from "../layouts/Navbar";
+import Sidebar from "../layouts/Sidebar";
+import { Project } from "../pages/Dashboard/types";
 
 const BinContextMenu: React.FC<{
   x: number;
@@ -15,6 +16,7 @@ const BinContextMenu: React.FC<{
       className="fixed bg-white shadow-lg rounded-md py-2 z-50 w-48"
       style={{ top: y, left: x }}
     >
+      <SEO title="Bin Page" description="This is my Bin page" />
       <button
         onClick={onRestore}
         className="w-full text-left px-4 py-2 hover:bg-gray-100 text-green-600"
@@ -68,28 +70,28 @@ const Bin: React.FC = () => {
 
   const handleRestore = async () => {
     if (contextMenu.index === null) return;
-    
+
     const index = contextMenu.index;
     setContextMenu({ x: 0, y: 0, index: null });
 
     try {
       const binData = [...deletedProjects];
       const projectToRestore = binData[index];
-      
+
       binData.splice(index, 1);
       setDeletedProjects(binData);
       await setItem("bin", binData);
-      
+
       let existingProjects = await getItem("projects") || [];
       existingProjects = Array.isArray(existingProjects) ? existingProjects : [];
-      
+
       try {
         const response = await fetch("http://localhost:4008/project", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(projectToRestore),
         });
-        
+
         if (response.ok) {
           const restoredProject = await response.json();
           existingProjects.push(restoredProject);
@@ -100,7 +102,7 @@ const Bin: React.FC = () => {
         console.error("Error restoring to server, adding to local storage only:", error);
         existingProjects.push(projectToRestore);
       }
-      
+
       await setItem("projects", existingProjects);
     } catch (error) {
       console.error("Error restoring project:", error);
@@ -109,7 +111,7 @@ const Bin: React.FC = () => {
 
   const handlePermanentDelete = async () => {
     if (contextMenu.index === null) return;
-    
+
     const index = contextMenu.index;
     setContextMenu({ x: 0, y: 0, index: null });
 
@@ -147,9 +149,9 @@ const Bin: React.FC = () => {
 
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold">Bin</h1>
-          
+
           {deletedProjects.length > 0 && (
-            <button 
+            <button
               onClick={handleEmptyBin}
               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mt-4"
             >

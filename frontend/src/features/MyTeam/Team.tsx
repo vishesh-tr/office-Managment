@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../store/store";
-import { removeMember, updateMemberProjects } from "../MyTeam/TeamSlice";
+import SEO from "../../components/SEO";
 import Navbar from "../../layouts/Navbar";
 import Sidebar from "../../layouts/Sidebar";
-import TeamMemberCard from "../MyTeam/components/TeamMemberCard";
-import { Project } from "../../pages/Dashboard/types";
 import { fetchProjects } from "../../pages/Dashboard/projectSlice";
+import { Project } from "../../pages/Dashboard/types";
+import { AppDispatch, RootState } from "../../store/store";
+import TeamMemberCard from "../MyTeam/components/TeamMemberCard";
+import { removeMember, updateMemberProjects } from "../MyTeam/TeamSlice";
 
 const TEAM_UPDATED_EVENT = "team_updated";
 
@@ -24,23 +25,23 @@ const Team: React.FC = () => {
   const [availableProjects, setAvailableProjects] = useState<string[]>([]);
 
   // --------- DARK MODE STATE -----------
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("dark-mode");
-      if (saved !== null) return saved === "true";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return false;
-  });
+  // const [darkMode, setDarkMode] = useState<boolean>(() => {
+  //   if (typeof window !== "undefined") {
+  //     const saved = localStorage.getItem("dark-mode");
+  //     if (saved !== null) return saved === "true";
+  //     return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  //   }
+  //   return false;
+  // });
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("dark-mode", darkMode.toString());
-  }, [darkMode]);
+  // useEffect(() => {
+  //   if (darkMode) {
+  //     document.documentElement.classList.add("dark");
+  //   } else {
+  //     document.documentElement.classList.remove("dark");
+  //   }
+  //   localStorage.setItem("dark-mode", darkMode.toString());
+  // }, [darkMode]);
 
   useEffect(() => {
     dispatch(fetchProjects());
@@ -116,13 +117,14 @@ const Team: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      <SEO title="Team Page" description="This is my Team page" />
       <Sidebar projects={projects} sidebarOpen={sidebarOpen} />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
 
         {/* Dark Mode Toggle Button */}
-        <div className="flex justify-end items-center p-4">
+        {/* <div className="flex justify-end items-center p-4">
           <button
             onClick={() => setDarkMode((prev) => !prev)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow transition-colors"
@@ -142,7 +144,7 @@ const Team: React.FC = () => {
             )}
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
-        </div>
+        </div> */}
 
         <div className="flex-1 px-4 py-8 sm:px-8 lg:px-8 max-w-7xl mx-auto w-full">
           <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
