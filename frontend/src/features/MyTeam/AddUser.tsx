@@ -1,12 +1,23 @@
 import axios from "axios";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import user1 from "../../assets/img1.png";
-import user2 from "../../assets/img10.png";
-import user3 from "../../assets/img11.png";
-import vishesh from "../../assets/img12.png";
+import user2 from "../../assets/img2.png";
+import user3 from "../../assets/img3.png";
+import user4 from "../../assets/img4.png";
+import user5 from "../../assets/img5.png";
+import user6 from "../../assets/img6.png";
+import user7 from "../../assets/img7.png";
+import user8 from "../../assets/img8.png";
+import user9 from "../../assets/img9.png";
+import user10 from "../../assets/img10.png";
+import user11 from "../../assets/img11.png";
+import user12 from "../../assets/img12.png";
 import SEO from "../../components/SEO";
+import { AppDispatch } from "../../store/store";
+import { addMember } from "../MyTeam/TeamSlice";
 
 interface NewUser {
   name: string;
@@ -26,7 +37,15 @@ const avatarOptions = [
   { label: "User 1", value: user1 },
   { label: "User 2", value: user2 },
   { label: "User 3", value: user3 },
-  { label: "Vishesh", value: vishesh },
+  { label: "User 4", value: user4 },
+  { label: "User 5", value: user5 },
+  { label: "User 6", value: user6 },
+  { label: "User 7", value: user7 },
+  { label: "User 8", value: user8 },
+  { label: "User 9", value: user9 },
+  { label: "User 10", value: user10 },
+  { label: "User 11", value: user11 },
+  { label: "user 12", value: user12 },
 ];
 
 const AddUser: React.FC = () => {
@@ -38,6 +57,7 @@ const AddUser: React.FC = () => {
   });
 
   const [projects, setProjects] = useState<Project[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,19 +96,31 @@ const AddUser: React.FC = () => {
     }
 
     try {
+      // Post to backend
       await axios.post("http://localhost:4008/team/team", newUser);
 
+      // Get current team from localStorage to determine rank
       const existingTeam = JSON.parse(localStorage.getItem("team") || "[]");
-
+      
       const newTeamMember = {
         ...newUser,
         rank: existingTeam.length + 1,
       };
 
-      const updatedTeam = [...existingTeam, newTeamMember];
-      localStorage.setItem("team", JSON.stringify(updatedTeam));
+      // Add to Redux store (this will also update localStorage through the Team component)
+      dispatch(addMember(newTeamMember));
 
       alert("User added successfully!");
+      
+      // Reset form
+      setNewUser({
+        name: "",
+        role: "",
+        avatar: "",
+        projects: [],
+      });
+      
+      // Navigate to team page
       navigate("/team");
     } catch (error) {
       console.error("Error adding user:", error);
