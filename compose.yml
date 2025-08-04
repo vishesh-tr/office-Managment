@@ -1,12 +1,76 @@
-services:
-  frontend:
-    container_name: frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      
-    ports:
-      - "3000:3000"
+name: Office Management
 
+services:
+  # server container
+  server:
+    container_name: office managment-server
+    image: registry.digitalocean.com/office managment-server:latest
+    build:
+      context: ./server
+      dockerfile: dockerfile
+      target: ${NODE_ENV}
+      args:
+        - NODE_ENV=${NODE_ENV}
+    develop:
+      watch:
+        - action: sync
+          path: ./server
+          target: /app
+        - action: rebuild
+          path: ./server/package.json
+    ports:
+      - "${SERVER_PORT}"
     profiles:
-      - dev
+      - development
+      - production
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${SERVER_PORT}
+      - MONGO_URI=mongodb://mongo:${MONGO_PORT}/${MONGO_INITDB_DATABASE}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - JWT_REFRESH_EXPIRATION=${JWT_REFRESH_EXPIRATION}
+      - API_VERSION=${API_VERSION}
+      - API_ROUTE=api/${API_VERSION}
+    depends_on:
+      - mongo
+
+  # client container
+  client:
+    container_name: office managment-client
+    image: registry.digitalocean.com/office managment-client:latest
+    build:
+      context: ./client
+      dockerfile: dockerfile
+      target: ${NODE_ENV}
+      args:
+        - NODE_ENV=${NODE_ENV}
+    develop:
+      watch:
+        - action: sync
+          path: ./client
+          target: /app
+        - action: rebuild
+          path: ./client/package.json
+    ports:
+      - "${CLIENT_PORT}"
+    profiles:
+      - development
+      - production
+    environment:
+      - NODE_ENV=${NODE_ENV}
+    depends_on:
+      - server
+
+  # DB container
+  mongo:
+    container_name: aichat-mongo
+    image: mongo:latest
+    ports:
+      - "${MONGO_PORT}:27017"
+    profiles:
+      - development
+      - production
+    volumes:
+      - mongo-data:/data/db
